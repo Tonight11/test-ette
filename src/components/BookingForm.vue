@@ -91,6 +91,9 @@
 		<div class="form-group">
 			<UIFileUpload label="Фото" v-model="bookData.photo" />
 		</div>
+		<small class="error" style="color: red" v-if="formErrors.length">{{
+			formErrors[0]
+		}}</small>
 		<div class="booking-form__bot">
 			<button class="btn btn-main" @click="nextStep">Далее</button>
 		</div>
@@ -104,58 +107,27 @@
 	import UIRadio from '@/components/UI/UIRadio.vue';
 	import { useBookStore } from '@/stores/book';
 	import { storeToRefs } from 'pinia';
-	import { ref, watch } from 'vue';
+	import { ref } from 'vue';
 	import { yandexMap } from 'vue-yandex-maps';
+	import { useGetAddress } from '@/composables/address';
 
 	const coordinates = ref([55, 35]);
 	const controls = ['fullscreenControl'];
 	const detailedControls = {
 		zoomControl: { position: { right: 10, top: 50 } },
 	};
-	const { clearBookData, submitBookData } = useBookStore();
-	const { bookData } = storeToRefs(useBookStore());
-	const objectTypeOptions = ref(['123', '12', '3']);
-	const propertyTypeOptions = ref(['312', '32', '1']);
+	const { validateForm, submitBookData } = useBookStore();
+	const { bookData, formErrors } = storeToRefs(useBookStore());
+	const objectTypeOptions = ref(['Жилье', 'Магазин', 'Отель']);
+	const propertyTypeOptions = ref(['Квартира', 'Дом', 'Яхта']);
 
 	function nextStep() {
-		submitBookData();
+		if (validateForm()) {
+			submitBookData();
+		}
 	}
 
-	let timer;
-	let waitSuggTimer = 2000;
-	watch(
-		() => bookData.value.address,
-		(newValue, oldValue) => {
-			clearTimeout(timer);
-			console.log(newValue);
-			timer = setTimeout(async () => {
-				await HTTPRequest(newValue);
-			}, waitSuggTimer);
-		}
-	);
-
-	const url = import.meta.env.VITE_URL;
-	const token = import.meta.env.VITE_TOKEN;
-	const HTTPRequest = async query => {
-		console.log(query);
-		const res = await fetch(url, {
-			method: 'POST',
-			mode: 'cors',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-				Authorization: 'Token ' + token,
-			},
-			body: JSON.stringify({ query: query }),
-		});
-		const { suggestions } = await res.json();
-		const nearestStreet = suggestions[0];
-		bookData.value.address = nearestStreet.value;
-		coordinates.value = [
-			+nearestStreet.data.geo_lat,
-			+nearestStreet.data.geo_lon,
-		];
-	};
+	useGetAddress(coordinates);
 </script>
 
 <style>
