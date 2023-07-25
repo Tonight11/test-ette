@@ -11,7 +11,12 @@
 		<label for="photo">
 			<img src="../../assets/img/photo.png" alt="" />
 		</label>
-		<img v-if="imageUrl" :src="imageUrl" alt="Выбранное изображение" />
+		<img
+			class="preview"
+			v-if="imageUrl"
+			:src="imageUrl"
+			alt="Выбранное изображение"
+		/>
 	</div>
 </template>
 
@@ -36,7 +41,7 @@
 		flex-direction: column;
 		align-items: flex-start;
 	}
-	.img-form img {
+	.preview {
 		width: 200px;
 		height: 200px;
 	}
