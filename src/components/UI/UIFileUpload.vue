@@ -36,6 +36,10 @@
 		flex-direction: column;
 		align-items: flex-start;
 	}
+	.img-form img {
+		width: 200px;
+		height: 200px;
+	}
 	.img-form__text {
 		font-weight: bold;
 	}
