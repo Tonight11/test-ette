@@ -17,6 +17,16 @@
 				placeholder="Укажите адрес"
 				v-model="bookData.address"
 			/>
+			<YandexMap
+				:coordinates="coordinates"
+				:detailed-controls="detailedControls"
+				:controls="controls"
+			>
+				<YandexMarker
+					:coordinates="coordinates"
+					:marker-id="123"
+				></YandexMarker>
+			</YandexMap>
 		</div>
 
 		<div class="booking-form__type type-book">
@@ -81,8 +91,9 @@
 		<div class="form-group">
 			<UIFileUpload label="Фото" v-model="bookData.photo" />
 		</div>
-		{{ bookData }}
-		<button class="next-button" @click="nextStep">Далее</button>
+		<div class="booking-form__bot">
+			<button class="btn btn-main" @click="nextStep">Далее</button>
+		</div>
 	</div>
 </template>
 
@@ -93,8 +104,14 @@
 	import UIRadio from '@/components/UI/UIRadio.vue';
 	import { useBookStore } from '@/stores/book';
 	import { storeToRefs } from 'pinia';
-	import { ref } from 'vue';
+	import { ref, watch } from 'vue';
+	import { yandexMap } from 'vue-yandex-maps';
 
+	const coordinates = ref([55, 35]);
+	const controls = ['fullscreenControl'];
+	const detailedControls = {
+		zoomControl: { position: { right: 10, top: 50 } },
+	};
 	const { clearBookData, submitBookData } = useBookStore();
 	const { bookData } = storeToRefs(useBookStore());
 	const objectTypeOptions = ref(['123', '12', '3']);
@@ -103,6 +120,42 @@
 	function nextStep() {
 		submitBookData();
 	}
+
+	let timer;
+	let waitSuggTimer = 2000;
+	watch(
+		() => bookData.value.address,
+		(newValue, oldValue) => {
+			clearTimeout(timer);
+			console.log(newValue);
+			timer = setTimeout(async () => {
+				await HTTPRequest(newValue);
+			}, waitSuggTimer);
+		}
+	);
+
+	const url = import.meta.env.VITE_URL;
+	const token = import.meta.env.VITE_TOKEN;
+	const HTTPRequest = async query => {
+		console.log(query);
+		const res = await fetch(url, {
+			method: 'POST',
+			mode: 'cors',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: 'Token ' + token,
+			},
+			body: JSON.stringify({ query: query }),
+		});
+		const { suggestions } = await res.json();
+		const nearestStreet = suggestions[0];
+		bookData.value.address = nearestStreet.value;
+		coordinates.value = [
+			+nearestStreet.data.geo_lat,
+			+nearestStreet.data.geo_lon,
+		];
+	};
 </script>
 
 <style>
@@ -179,5 +232,11 @@
 	input[type='radio']:checked ~ label {
 		background-color: #ffffff;
 		color: #3c83f8;
+	}
+
+	.yandex-container {
+		margin-top: 20px;
+		height: 300px;
+		max-width: 500px;
 	}
 </style>

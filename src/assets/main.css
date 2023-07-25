@@ -14,3 +14,17 @@ body {
 	font-weight: 600;
 	margin-bottom: 20px;
 }
+
+.btn {
+	display: inline-block;
+	cursor: pointer;
+	outline: none;
+	border: none;
+	color: white;
+	border-radius: 12px;
+	padding: 10px 20px;
+	font-family: Montserrat;
+	font-size: 15px;
+	font-weight: 500;
+	background: var(--primary, #8cb2f0);
+}
