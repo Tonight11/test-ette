@@ -22,6 +22,10 @@
 		flex-direction: column;
 	}
 
+	.form-control label{
+		margin-bottom: 10px;
+	}
+
 	.form-control input,
 	.form-control select,
 	textarea {
