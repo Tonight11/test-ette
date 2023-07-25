@@ -29,6 +29,10 @@ export const useBookStore = defineStore('book', () => {
 			formErrors.value.push('Выберите тип недвижимости');
 		}
 
+		if (!bookData.value.address) {
+			formErrors.value.push('Укажите адресс');
+		}
+
 		if (!bookData.value.rentalType) {
 			formErrors.value.push('Выберите тип аренды');
 		}
@@ -54,7 +58,7 @@ export const useBookStore = defineStore('book', () => {
 			formErrors.value.push('Укажите коммисию');
 		}
 		if (!bookData.value.photo) {
-			formErrors.value.push('Укажите фото');
+			formErrors.value.push('Прикрепите фото');
 		}
 		return formErrors.value.length === 0;
 	}
