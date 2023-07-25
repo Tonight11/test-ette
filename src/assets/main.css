@@ -1,1 +1,16 @@
 @import './base.css';
+
+body {
+	background-color: #e6efff;
+	padding: 20px;
+}
+
+.title {
+	color: var(--black, #181818);
+
+	font-family: 'Montserrat';
+	font-size: 20px;
+	font-style: normal;
+	font-weight: 600;
+	margin-bottom: 20px;
+}
