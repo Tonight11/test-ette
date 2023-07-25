@@ -16,6 +16,48 @@ export const useBookStore = defineStore('book', () => {
 		description: '',
 		photo: null,
 	});
+	const formErrors = ref([]);
+
+	function validateForm() {
+		formErrors.value = [];
+
+		if (!bookData.value.selectedObjectType) {
+			formErrors.value.push('Выберите тип объекта');
+		}
+
+		if (!bookData.value.selectedPropertyType) {
+			formErrors.value.push('Выберите тип недвижимости');
+		}
+
+		if (!bookData.value.rentalType) {
+			formErrors.value.push('Выберите тип аренды');
+		}
+
+		if (!bookData.value.rooms) {
+			formErrors.value.push('Укажите количество комнат');
+		}
+
+		if (!bookData.value.area) {
+			formErrors.value.push('Укажите площадь');
+		}
+
+		if (!bookData.value.floor) {
+			formErrors.value.push('Укажите этаж');
+		}
+		if (!bookData.value.totalFloors) {
+			formErrors.value.push('Укажите кол-во этаж');
+		}
+		if (!bookData.value.price) {
+			formErrors.value.push('Укажите цену');
+		}
+		if (!bookData.value.commission) {
+			formErrors.value.push('Укажите коммисию');
+		}
+		if (!bookData.value.photo) {
+			formErrors.value.push('Укажите фото');
+		}
+		return formErrors.value.length === 0;
+	}
 
 	const clearBookData = () => {
 		bookData.value.selectedObjectType = '';
@@ -49,11 +91,13 @@ export const useBookStore = defineStore('book', () => {
 		};
 
 		alert(JSON.stringify(jsonData, null, 2));
+		clearBookData();
 	};
 
 	return {
 		bookData,
-		clearBookData,
 		submitBookData,
+		validateForm,
+		formErrors,
 	};
 });
